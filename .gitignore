@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.env
+*.pyc
+
+data/
+datasets/
+models/
+checkpoints/
+*.pt
+*.pth
+*.safetensors
+
+.vscode/
+.idea/
