@@ -4,7 +4,13 @@ __pycache__/
 .env
 *.pyc
 
+*.ipynb
 data/
+satquery_dataset/
+final_satquery_dataset/
+unsloth_compiled_cache/
+*.tar.xz
+*.zip
 docs/
 datasets/
 models/
