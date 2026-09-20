@@ -4,6 +4,10 @@
 import os
 import base64
 import json
+from pathlib import Path
+from PIL import Image
+import rasterio
+import numpy as np
 
 
 from dotenv import load_dotenv
@@ -20,19 +24,68 @@ if not HF_TOKEN:
 MODEL = "Qwen/Qwen3.5-27B"
 
 ## CHANGE NODE
-def change_node(before_image, after_image, query):
+def change_node(before_tiff_image, after_tiff_image, query):
 
     # check both images are uploaded or not...
-    if not before_image:
+    if not before_tiff_image:
         raise Exception("Earlier or Image 1 is missing for Analysis !")
 
-    if not after_image:
+    if not after_tiff_image:
         raise Exception("After or Image 2 is missing for Analysis !")
     
+    # Convert the .tiff to .jpeg image file
+    def tiff_to_jpeg(tiff_image):
 
-    # Image to data url
-    def image_to_data_url(path: str) -> str:
-        with open(path, "rb") as f:
+        output_path = Path(tiff_image).with_suffix(".jpeg")
+
+        with rasterio.open(tiff_image) as src:
+            tiff = src.read(1).astype(np.float32)
+
+        # Robust contrast stretching
+        p2, p98 = np.nanpercentile(tiff, (2, 98))
+
+        # Avoid division by zero
+        if p98 <= p2:
+            tiff_vis = np.zeros_like(tiff, dtype=np.float32)
+        else:
+            # normalization
+            tiff_vis = np.clip((tiff - p2) / (p98 - p2), 0, 1)
+
+        # 8-bit image for display
+        jpeg_uint8 = (tiff_vis * 255).astype(np.uint8)
+
+        # save to image format
+        Image.fromarray(jpeg_uint8).save(output_path, format="JPEG", quality=85)
+
+        return str(output_path)
+        
+
+    # resize the image pixels to 1080 x 1080
+    def resize__image(jpeg_path):
+
+        # jepg image path
+        jpeg_path = Path(jpeg_path)
+
+        # Output filename
+        output_path = jpeg_path.with_name(jpeg_path.stem + "_1080.jpeg")
+
+        img = Image.open(jpeg_path)
+
+        # Resize while preserving the complete scene
+        img = img.resize((1080, 1080), Image.Resampling.LANCZOS)
+
+        # Qwen vision input: convert grayscale SAR visualization to 3-channel
+        img = img.convert("RGB")
+
+        img.save(output_path, format="JPEG", quality=85, optimize=True)
+
+        return str(output_path)
+
+        
+    # jpeg image to data url
+    def image_to_data_url(resized_jpeg_path):
+
+        with open(resized_jpeg_path, "rb") as f:
             image_bytes = f.read()
 
         encoded = base64.b64encode(image_bytes).decode("utf-8")
@@ -40,8 +93,15 @@ def change_node(before_image, after_image, query):
         return f"data:image/jpeg;base64,{encoded}"
 
 
-    image_1_url = image_to_data_url(before_image)
-    image_2_url = image_to_data_url(after_image)
+    # Image 1 -- tiff to resize jpeg
+    image_1_jpeg_path = tiff_to_jpeg(before_tiff_image)
+    resized_jpeg_path = resize__image(image_1_jpeg_path)
+    image_1_url = image_to_data_url(resized_jpeg_path)
+
+    # Image 1 -- tiff to resize jpeg
+    image_2_jpeg_path = tiff_to_jpeg(after_tiff_image)
+    resized_jpeg_path = resize__image(image_2_jpeg_path)
+    image_2_url = image_to_data_url(resized_jpeg_path)
 
 
     system_prompt = """
@@ -189,24 +249,18 @@ def change_node(before_image, after_image, query):
     )
 
     message = response.choices[0].message
-    #print(message)
     return message.content
-    #int("QWEN3.5-27B BI-TEMPORAL CHANGE ANALYSIS")
-    #print("=" * 70)
-    #print(message.content)
-    #print("=" * 70)
 
+  
 
-"""
 # Earlier Observation
-before_image_1 = "/home/rikin/satquery-ai/bi-temporal-testing/T1.png"
+before_image_1 = "/home/rikin/satquery-ai/satquery_sar_test/sample_VH.tif"
 
 # Later Observation
-after_image_2 = "/home/rikin/satquery-ai/bi-temporal-testing/T2.png"
+after_image_2 = "/home/rikin/satquery-ai/satquery_sar_test/sample_VV.tif"
 
 # User Query
 query = "Compare the EARLIER image and the LATER image. Identify the significant changes between them."
 
 ## Testing the agent
 print(change_node(before_image_1, after_image_2, query))
-"""
