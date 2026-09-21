@@ -92,5 +92,6 @@ def router_node(state, llm):
     
     return {
         **state,
-        "task_type": state.get("execution_trace", []) + [f"Router Selected: {route}", f"Router Reason: {reason}"]
+        "task_type": route,
+        "execution_trace": state.get("execution_trace", []) + [f"Router Selected: {route}", f"Router Reason: {reason}"]
     }

@@ -8,8 +8,9 @@ class SatQueryState(TypedDict):
 
     image_paths: list[str]
 
-    task: Optional[str]
-
+    # for router node -> selectes the task type
+    task_type: Optional[str]
+    
     result: Optional[str]
 
     model_used: Optional[str]
@@ -17,4 +18,3 @@ class SatQueryState(TypedDict):
     confidence: Optional[float]
 
     execution_trace: list[str]
-
