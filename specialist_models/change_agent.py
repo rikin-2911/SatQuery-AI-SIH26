@@ -251,8 +251,8 @@ def change_node(before_tiff_image, after_tiff_image, query):
     message = response.choices[0].message
     return message.content
 
-  
 
+"""
 # Earlier Observation
 before_image_1 = "/home/rikin/satquery-ai/satquery_sar_test/sample_VH.tif"
 
@@ -264,3 +264,4 @@ query = "Compare the EARLIER image and the LATER image. Identify the significant
 
 ## Testing the agent
 print(change_node(before_image_1, after_image_2, query))
+"""

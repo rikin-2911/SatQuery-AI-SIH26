@@ -204,19 +204,21 @@ def grounding_node(tiff_image, query):
     return message.content
 
 
+
+
 # Testing
 # Input image
-tiff_img = "/home/rikin/satquery-ai/satquery_sar_test/sample_VV.tif"
+#tiff_img = "/home/rikin/satquery-ai/satquery_sar_test/sample_VV.tif"
 
 # user query
-query = """
-    Identify the approximate locations of the following features in the SAR image:
+#query = """
+#    Identify the approximate locations of the following features in the SAR image:
 
-    1. The main water body
-    2. The major mountainous region
-    3. The densest forested region
-    4. Any visible built-up or settlement area
+#    1. The main water body
+#    2. The major mountainous region
+#    3. The densest forested region
+#    4. Any visible built-up or settlement area
 
-    """
+#    """
 
-print(grounding_node(tiff_img, query))
+#print(grounding_node(tiff_img, query))
