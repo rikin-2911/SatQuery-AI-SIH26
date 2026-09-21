@@ -1,4 +1,5 @@
 ## Router prompt for guiding the agent for choosing the correct node based on User Query and Input
+import json
 from typing import Literal
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -48,56 +49,48 @@ Return ONLY valid JSON:
 }
 """
 
+def router_node(state, llm):
 
-## NODE
-def router_node(state: dict, llm) -> dict:
-    query = state["query"]
-    image_paths = state["image_paths"]
+    # user input query
+    query = state['query']
 
-    image_count = len(image_paths)
+    # input tiff images counting
+    image_paths = state['image_paths']
+    img_count = len(image_paths)
 
     user_input = f"""
-          QUERY:
-          {query}
+    USER QUERY: {query}
+    NUMBER OF IMAGES: {img_count}
+    IMAGE_PATHS: {image_paths}
+    """
 
-          IMAGE COUNT:
-          {image_count}
-
-          IMAGE PATHS:
-          {image_paths}
-        """
-
+    # result from router llm -> llama3.1-8B (probably)
     response = llm.invoke([
         SystemMessage(content=SYSTEM_PROMPT),
         HumanMessage(content=user_input)
     ])
 
-    # Parse the LLM JSON response
-    import json
-
     try:
         routing = json.loads(response.content)
+
         route = routing.get("route")
         reason = routing.get("reason", "")
-    except Exception:
+
+    except (json.JSONDecodeError, TypeError):
         route = None
-        reason = "Router returned invalid JSON."
+        reason = "Router returned Invalied JSON"
 
-    # Safety validation
-    if route not in {"change", "sar", "grounding"}:
-        return {
+    # Validate route
+    valid_routes = {"change", "sar", "grounding"}
+
+    if route not in valid_routes:
+
+      return {
             **state,
-            "task_type": None,
-            "execution_trace": state.get("execution_trace", []) + [
-                "Router failed: invalid route."
-            ]
+            "task_type": state.get("execution_trace", []) + ["Router failed: Invalid Route"]
         }
-
+    
     return {
         **state,
-        "task_type": route,
-        "execution_trace": state.get("execution_trace", []) + [
-            f"Router selected: {route}",
-            f"Reason: {reason}"
-        ]
+        "task_type": state.get("execution_trace", []) + [f"Router Selected: {route}", f"Router Reason: {reason}"]
     }
