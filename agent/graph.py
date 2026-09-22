@@ -71,7 +71,8 @@ def grounding_graph_node(state:SatQueryState):
         "execution_trace":state['execution_trace'] + ["Executed Grounding Analysis"]
     }
 
-## llm for routing 
+## llm for routing  -> Implement in backend
+"""
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_HUB_ACCESS_TOKEN_2")
 
@@ -84,6 +85,7 @@ model = HuggingFaceEndpoint(
     )
 
 llm = ChatHuggingFace(llm=model)
+"""
 
 def build_satgraph(router_llm):
     # Workflow of the graph
@@ -113,6 +115,7 @@ def build_satgraph(router_llm):
     return sat_graph.compile()
 
 
+"""
 ## FINAL TESTING OF WHOLE WORKFLOW....
 
 sar_state = {
@@ -165,3 +168,4 @@ graph = build_satgraph(llm)
 result = graph.invoke(change_state)
 
 print(result)
+"""
