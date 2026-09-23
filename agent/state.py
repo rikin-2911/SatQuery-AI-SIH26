@@ -10,6 +10,12 @@ class SatQueryState(TypedDict):
 
     # for router node -> selectes the task type
     task_type: Optional[str]
+
+    # human readable answer
+    answer: Optional[str]
+
+    # original struct ans
+    raw_result: Optional[Any]
     
     result: Optional[str]
 
