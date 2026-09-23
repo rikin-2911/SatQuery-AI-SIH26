@@ -1,0 +1,149 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * SatQuery AI design system — dark charcoal, restrained cyan/teal accents,
+ * geospatial grid motifs. All colors are oklch semantic tokens.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-online: var(--online);
+  --color-sar: var(--sar);
+  --color-change: var(--change);
+  --color-grounding: var(--grounding);
+  --font-sans: "Inter Tight", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: oklch(0.17 0.012 240);
+  --foreground: oklch(0.94 0.008 220);
+  --card: oklch(0.21 0.014 240);
+  --card-foreground: oklch(0.94 0.008 220);
+  --popover: oklch(0.21 0.014 240);
+  --popover-foreground: oklch(0.94 0.008 220);
+  --primary: oklch(0.78 0.13 200);
+  --primary-foreground: oklch(0.17 0.012 240);
+  --secondary: oklch(0.26 0.016 240);
+  --secondary-foreground: oklch(0.92 0.008 220);
+  --muted: oklch(0.25 0.014 240);
+  --muted-foreground: oklch(0.66 0.018 230);
+  --accent: oklch(0.3 0.03 220);
+  --accent-foreground: oklch(0.94 0.008 220);
+  --destructive: oklch(0.6 0.19 25);
+  --destructive-foreground: oklch(0.97 0.01 25);
+  --border: oklch(0.3 0.016 240);
+  --input: oklch(0.3 0.016 240);
+  --ring: oklch(0.72 0.12 200);
+  --surface: oklch(0.19 0.013 240);
+  --surface-raised: oklch(0.24 0.015 240);
+  --signal: oklch(0.8 0.12 195);
+  --signal-foreground: oklch(0.17 0.012 240);
+  --online: oklch(0.75 0.17 152);
+  --sar: oklch(0.78 0.13 200);
+  --change: oklch(0.79 0.13 85);
+  --grounding: oklch(0.72 0.12 160);
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@utility grid-motif {
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--border) 65%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--border) 65%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+@utility panel {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+
+@utility tech-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+@keyframes radar-sweep {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@utility radar-sweep {
+  animation: radar-sweep 6s linear infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@utility pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
