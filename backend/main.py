@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 
 from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from agent.graph import build_satgraph
@@ -32,6 +34,18 @@ app = FastAPI(title="SatQuery AI",
     description="Interactive Vision-Language Assistant for Remote Sensing Image Analysis",
     version="0.1.0",
     )
+
+# CORS (Cross Origin resource Sharing) allowing for frontend localhost
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8080",
+        "http://127.0.0.1:8080",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 def startup_event():
