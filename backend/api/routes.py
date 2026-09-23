@@ -1,4 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Request
+from fastapi.responses import FileResponse
 #from pydantic import BaseModel
 from typing import List
 from pathlib import Path
@@ -7,6 +8,7 @@ import shutil
 
 from backend.schemas.analysis import AnalysisResponse
 from backend.services.agent_service import AgentService
+from backend.services.evidence_service import create_evidence_preview
 
 router = APIRouter()
 
@@ -80,19 +82,70 @@ def analyze(request: Request, query: str = Form(...), images: list[UploadFile] =
             image_paths.append(str(file_path))
 
         
-        # 5. getting the agent_service from main using Request
+        # 5. Create evidence previews
+        evidence_images = []
+
+        for image_path in image_paths:
+
+            preview_path = create_evidence_preview(
+                tiff_path=image_path,
+                output_dir=str(upload_dir),
+            )
+
+            preview_filename = Path(preview_path).name
+
+            evidence_images.append({
+                "filename": preview_filename,
+                "url": f"/api/v1/evidence/{request_id}/{preview_filename}",
+            })
+
+
+        # 6. Get agent service
         agent_service = request.app.state.agent_service
 
-        # 6. Calling langgraph agents
-        result = agent_service.analyze(query=query, image_paths=image_paths)
 
+        # 7. Run LangGraph
+        result = agent_service.analyze(
+            query=query,
+            image_paths=image_paths,
+        )
+
+
+        # 8. Return analysis + evidence
         return {
-            "request_id":request_id,
-            **result
+            "request_id": request_id,
+            **result,
+            "evidence": {
+                "images": evidence_images,
+            },
         }
+    
     except HTTPException:
         raise
 
     except Exception as e:
 
         raise HTTPException(status_code=500, detail=str(e))
+
+# getting the image for preview at UI
+@router.get("/evidence/{request_id}/{filename}")
+def get_evidence(
+    request_id: str,
+    filename: str,
+):
+    file_path = (
+        Path("uploads")
+        / request_id
+        / filename
+    )
+
+    if not file_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Evidence image not found",
+        )
+
+    return FileResponse(
+        file_path,
+        media_type="image/jpeg",
+    )
