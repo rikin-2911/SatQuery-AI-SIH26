@@ -2,10 +2,6 @@
 
 ### An Interactive Vision-Language Assistant for Multimodal Remote Sensing Image Analysis
 
-**Smart India Hackathon 2026 -- SIH26167**  
-**Team:** PINNACLE  
-**Theme:** Space Technology
-
 SatQuery AI is an agentic, multimodal remote-sensing analysis system
 that lets users ask natural-language questions about satellite imagery.
 Instead of forcing users to select a separate model for every task, the
@@ -543,7 +539,10 @@ Web Interface
 
 # Developers
 
-**Team PINNACLE -- Smart India Hackathon 2026**
+**Smart India Hackathon 2026 -- SIH26167**  
+**Team:** PINNACLE  
+**Theme:** Space Technology
+
 
 **SIH26167:** SatQuery AI — An Interactive Vision-Language Assistant for
 Multimodal Remote Sensing Image Analysis through Text Queries
