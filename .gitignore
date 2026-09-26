@@ -18,6 +18,9 @@ unsloth_compiled_cache/
 *.geotiff
 *.geotif
 
+*.json
+*jinja
+
 
 *.tar.xz
 *.zip
