@@ -1,0 +1,10 @@
+{
+  "global_step": 6000,
+  "average_loss": 1.2604347527581268,
+  "last_loss": 0.0077075958251953125,
+  "gradient_norm": 0.2150552123785019,
+  "spectral_lr": 1e-05,
+  "lora_lr": 5e-05,
+  "weight_decay": 0.01,
+  "max_grad_norm": 1.0
+}
