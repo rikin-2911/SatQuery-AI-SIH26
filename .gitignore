@@ -23,12 +23,14 @@ unsloth_compiled_cache/
 
 *.tar.xz
 *.zip
+*.pptx
+*.pdf
+*.mp4
 docs/
 datasets/
 models/
 
 checkpoints/
-
 *.pth
 
 
